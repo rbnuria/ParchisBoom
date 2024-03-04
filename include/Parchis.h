@@ -7,6 +7,7 @@
 # include "GUIPlayer.h"
 # include "Player.h"
 # include "AIPlayer.h"
+# include "PowerBar.h"
 #include <iostream>
 #include <algorithm>
 #include <memory>
@@ -138,8 +139,10 @@ class Parchis{
         Board board;
         //Dados
         Dice dice;
+        //Power bars
+        vector<PowerBar> power_bars;
 
-        static const int MAX_SPECIAL_DICES = 2;
+        static const int MAX_SPECIAL_DICES = 1;
 
         //Variables para almacenar los últimos movimientos
         //Últimos movimientos identificados por el color.
@@ -542,9 +545,9 @@ class Parchis{
 
         /**
          * @brief Get the Initial Box object
-         * 
-         * @param c 
-         * @return const Box 
+         *
+         * @param c
+         * @return const Box
          */
         inline const Box getInitialBox(color c) const{
             return Box(init_boxes.at(c), normal, none);
@@ -552,7 +555,7 @@ class Parchis{
 
         /**
          * @brief Get the Final Box object
-         * 
+         *
          * @param c
          * @return const Box
          */
@@ -643,51 +646,6 @@ class Parchis{
         }
 
         /**
-         * @brief Obtener los dados especiales disponibles para el jugador de color player.
-         * IMPORTANTE: Esta función devuelve solo los dados que se pueden usar en el turno actual,
-         * independientemente de que el jugador tenga en su mano más dados.
-         * (Por ejemplo, si le toca contarse 10 o 20 no se devolverá ningún dado).
-         *
-         */
-        inline const vector<int> getAvailableSpecialDices (color player) const{
-            return (dice.getAllDiceLayers(player).size() < 3)?dice.getSpecialDice(player):vector<int>();
-        }
-
-        /**
-         * @brief Obtener los dados especiales disponibles para el jugador número player.
-         * IMPORTANTE: Esta función devuelve solo los dados que se pueden usar en el turno actual,
-         * independientemente de que el jugador tenga en su mano más dados.
-         * (Por ejemplo, si le toca contarse 10 o 20 no se devolverá ningún dado).
-         *
-         */
-        inline const vector<int> getAvailableSpecialDices(int player) const{
-            return getAvailableSpecialDices(this->getPlayerColors(player)[0]);
-        }
-
-        /**
-         * Obtener todos los dados disponibles, incluyendo normales y especiales.
-         * IMPORTANTE: Esta función devuelve solo los dados que se pueden usar en el turno actual,
-         * independientemente de que el jugador tenga en su mano más dados.
-         * (Por ejemplo, si le toca contarse 10 o 20 solo se devolverán dichos dados).
-         */
-        inline const vector<int> getAllAvailableDices (color player) const{
-            vector<int> all_dices = dice.getDice(player);
-            vector<int> special_dices = getAvailableSpecialDices(player);
-            all_dices.insert(all_dices.end(), special_dices.begin(), special_dices.end());
-            return all_dices;
-        }
-
-        /**
-         * @brief Obtener todos los dados disponibles, incluyendo normales y especiales.
-         * IMPORTANTE: Esta función devuelve solo los dados que se pueden usar en el turno actual,
-         * independientemente de que el jugador tenga en su mano más dados.
-         * (Por ejemplo, si le toca contarse 10 o 20 solo se devolverán dichos dados).
-         */
-        inline const vector<int> getAllAvailableDices(int player) const{
-            return getAllAvailableDices(this->getPlayerColors(player)[0]);
-        }
-
-        /**
          * @brief Obtener todos los dados normales para el jugador de color player.
          * IMPORTANTE: esto incluye todos los dados normales del 1 al 6 que tenga el jugador en su mano en ese momento,
          * aunque en el turno en cuestión no pueda usarlos (por ejemplo, si tiene que contarse obligatoriamente 10 o 20).
@@ -703,45 +661,6 @@ class Parchis{
          */
         inline const vector<int> getNormalDices(int player) const{
             return dice.getAllDiceLayers(this->getPlayerColors(player)[0])[0];
-        }
-
-        /**
-         * @brief Obtener todos los dados especiales para el jugador de color player.
-         * IMPORTANTE: esto incluye todos los dados especiales que tenga el jugador en su mano en ese momento,
-         * aunque en el turno en cuestión no pueda usarlos (por ejemplo, si tiene que contarse obligatoriamente 10 o 20).
-         */
-        inline const vector<int> getSpecialDices(color player) const{
-            return dice.getAllDiceLayers(player)[1];
-        }
-
-        /**
-         * @brief Obtener todos los dados especiales para el jugador número player.
-         * IMPORTANTE: esto incluye todos los dados especiales que tenga el jugador en su mano en ese momento,
-         * aunque en el turno en cuestión no pueda usarlos (por ejemplo, si tiene que contarse obligatoriamente 10 o 20).
-         */
-        inline const vector<int> getSpecialDices(int player) const{
-            return dice.getAllDiceLayers(this->getPlayerColors(player)[0])[1];
-        }
-
-        /**
-         * @brief Obtener todos los dados para el jugador de color player.
-         * IMPORTANTE: esto incluye todos los dados que tenga el jugador en su mano en ese momento,
-         * aunque en el turno en cuestión no pueda usarlos (por ejemplo, si tiene que contarse obligatoriamente 10 o 20).
-         */
-        inline const vector<int> getAllDices(color player) const{
-            vector<int> all_dices = dice.getAllDiceLayers(player)[0];
-            vector<int> special_dices = dice.getAllDiceLayers(player)[1];
-            all_dices.insert(all_dices.end(), special_dices.begin(), special_dices.end());
-            return all_dices;
-        }
-
-        /**
-         * @brief Obtener todos los dados para el jugador número player.
-         * IMPORTANTE: esto incluye todos los dados que tenga el jugador en su mano en ese momento,
-         * aunque en el turno en cuestión no pueda usarlos (por ejemplo, si tiene que contarse obligatoriamente 10 o 20).
-         */
-        inline const vector<int> getAllDices(int player) const{
-            return getAllDices(this->getPlayerColors(player)[0]);
         }
 
         /**
@@ -825,10 +744,10 @@ class Parchis{
 
         /**
          * @brief Función auxiliar que devuelve la casilla desde la que partiría la ficha al contarse el número que se indica como argumento.
-         * 
-         * @param piece 
-         * @param dice_number 
-         * @return const Box 
+         *
+         * @param piece
+         * @param dice_number
+         * @return const Box
          */
         const Box computeReverseMove(const Piece & piece, int dice_number) const;
 

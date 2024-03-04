@@ -121,6 +121,8 @@ inline bool operator ==(const Box & a, const Box & b){
     return a.num == b.num && a.type == b.type && a.col == b.col;
 }
 
+
+
 //Enumerado de los diferentes tipos de objetos speciales que aparecen en el tablero.
 enum item_type {star = 101,
                 boo = 102,
@@ -136,7 +138,7 @@ enum item_type {star = 101,
 
 /**
  * @brief Struct para definir los objetos especiales que aparecen en el tablero.
- * 
+ *
  */
 struct SpecialItem
 {

@@ -324,24 +324,17 @@ ParchisGUI::ParchisGUI(Parchis &model)
             Vector2i pos = ini_pos + Vector2i((j-1)*offset.x, 2*i*offset.y);
             dices[dice_colors[i]][j-1].setPosition(pos.x, pos.y);
         }
+
+        dices[dice_colors[i]].push_back(DiceSprite(tDices, 100, dice_colors[i]));
+        dices[dice_colors[i]][6].setPosition(ini_pos.x + offset.x*6, ini_pos.y + offset.y*2*i);
         //special_10_20_dice[colors[i]].setNumber(20);
         //special_10_20_dice[colors[i]].setModelColor(colors[i]);
         special_10_20_dice[dice_colors[i]].push_back(DiceSprite(tDices, -1, dice_colors[i]));
-        special_10_20_dice[dice_colors[i]][0].setPosition(ini_pos.x + offset.x*6, ini_pos.y + offset.y*2*i);
+        special_10_20_dice[dice_colors[i]][0].setPosition(ini_pos.x + offset.x*7, ini_pos.y + offset.y*2*i);
     }
 
 
-    for (int i = 0; i < dice_colors.size(); i++){
-        for (int j = 1; j <= 6; j++){
-            dices[dice_colors[i]].push_back(DiceSprite(tDices, j, dice_colors[i]));
-            Vector2i pos = ini_pos + Vector2i((j-1)*offset.x, 2*i*offset.y);
-            dices[dice_colors[i]][j-1].setPosition(pos.x, pos.y);
-        }
-        //special_10_20_dice[colors[i]].setNumber(20);
-        //special_10_20_dice[colors[i]].setModelColor(colors[i]);
-        special_10_20_dice[dice_colors[i]].push_back(DiceSprite(tDices, -1, dice_colors[i]));
-        special_10_20_dice[dice_colors[i]][0].setPosition(ini_pos.x + offset.x*6, ini_pos.y + offset.y*2*i);
-    }
+
 
 
 
@@ -414,7 +407,7 @@ ParchisGUI::ParchisGUI(Parchis &model)
     //Sonidos
     this->initializeSoundEffects();
     this->setSoundEffects(false);
-    
+
     this->updateSprites();
 
     //Icono de la ventana.
@@ -574,20 +567,7 @@ void ParchisGUI::dynamicallyCollectSprites(){
     // Creación de los dados
     Vector2i ini_pos(900, 50);
     Vector2i offset(70, 80);
-    if(model->updateDice()){
-        for (int i = 0; i < dice_colors.size(); i++)
-        {
-            special_dices[dice_colors[i]].clear();
-            vector<int> special_dice_model = model->getDice().getSpecialDice(dice_colors[i]);
-            for (int j = 0; j < special_dice_model.size(); j++)
-            {
-                special_dices[dice_colors[i]].push_back(DiceSprite(tDices, special_dice_model.at(j), dice_colors[i]));
-                Vector2i pos = ini_pos + Vector2i(j * offset.x, (2 * i + 1) * offset.y);
-                special_dices[dice_colors[i]][j].setPosition(pos.x, pos.y);
-            }
-        }
-        model->sendUpdatedDiceSignal();
-    }
+
 
     all_dynamic_drawable_sprites.clear();
     board_dynamic_drawable_sprites.clear();
@@ -1719,7 +1699,7 @@ void ParchisGUI::switchBackgroundMusic(Music & m){
     }
     if(current_background_theme != nullptr)
         current_background_theme->stop();
-        
+
     current_background_theme = &m;
     if(music_on){
         current_background_theme->play();
@@ -1890,7 +1870,7 @@ void ParchisGUI::checkHurryUp(){
             else if(model->piecesAtGoal(colors[i]) == 2){
                 hurry_up = true;
             }
-            
+
         }
         if(win){
             switchBackgroundMusic(background_theme_win);
@@ -1928,7 +1908,7 @@ void ParchisGUI::checkSwitchMusic(){
         if(!star && !mega && !shock && model->piecesAtGoal(colors[i]) == 2){
             hurry_up = true;
         }
-        
+
     }
     if(star){
         switchBackgroundMusic(background_theme_star);

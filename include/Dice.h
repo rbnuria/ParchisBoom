@@ -12,7 +12,7 @@ class Dice{
     private:
         /**
          * @brief Dados para cada jugador. Los dados se agrupan por capas.
-         * 
+         *
          * - Capa 1: Dados clásicos del 1-6 (quitando el 3).
          * - Capa 2: Dados especiales adquiridos por el jugador.
          * - Capa 3: Dados forzados (mover 10 o 20)
@@ -80,7 +80,7 @@ class Dice{
          * @param player
          * @param new_dice, por defecto {1,2,4,5,6}
          */
-        void resetDice (color player , const vector<int> & new_dice = {1,2,4,5,6});
+        void resetDice (color player , const vector<int> & new_dice = {1,2,3,4,5,6,100});
 
         /**
          * @brief Función que comprueba si el número "n" está en el dado del jugador "player".
