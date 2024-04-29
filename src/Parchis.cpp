@@ -176,6 +176,17 @@ const Dice & Parchis::getDice() const{
     return this->dice;
 }
 
+const PowerBar & Parchis::getPowerBar(int player) const{
+    return this->power_bars[player];
+}
+
+const PowerBar & Parchis::getPowerBar(color c) const{
+    if (c == yellow or c == red)
+        return this->power_bars[0];
+    else
+        return this->power_bars[1];
+}
+
 const Board & Parchis::getBoard() const{
     return this->board;
 }
@@ -274,15 +285,43 @@ void Parchis::movePiece(color player, int piece, int dice_number){
 
                 cout << "***************current power: " << power_bar << endl;
 
-                if (power_bar <= 50){
-                    dice_number = 2 + power_bar/10;
-                }else if (power_bar <= 80){
-                    //BOOM
+                if(power_bar < 50){
+                    dice_number = 5 + power_bar/5;
+                }else if(power_bar < 60){
                     dice_number = red_shell;
-                }else{
-                    //STAR
+                }else if(power_bar < 65){
+                    //BOOM PEOR FICHA
+                    dice_number = boom;
+                }else if(power_bar < 70){
+                    dice_number = 25;
+                }else if(power_bar < 75){
+                    dice_number = red_shell;
+                }else if(power_bar < 80){
+                    dice_number = bullet;
+                }else if(power_bar < 85){
+                    //BOOM MEJOR FICHA
+                    dice_number = catapum;
+                }else if(power_bar < 90){
+                    dice_number = blue_shell;
+                }else if(power_bar < 95){
+                    //BOOM MEJOR FICHA DE CADA COLOR
+                    dice_number = boomboom;
+                }else if(power_bar < 100){
                     dice_number = star;
+                }else{
+                    //BOOM MEJOR COLOR ****COMPLETO****
+                    dice_number = catapumchimpum;
                 }
+                
+                // if (power_bar <= 50){
+                //     dice_number = 2 + power_bar/10;
+                // }else if (power_bar <= 80){
+                //     //BOOM
+                //     dice_number = red_shell;
+                // }else{
+                //     //STAR
+                //     dice_number = star;
+                // }
 
                 cout << "***DICE NUMBER: " << dice_number << endl;
 
@@ -405,6 +444,7 @@ void Parchis::movePiece(color player, int piece, int dice_number){
                 if(!playground_mode) this->dice.removeNumber(player, original_dice_number);
 
                 if(eating_move){
+                    power_bars[current_player].increasePower(15);
                     // Añadir al dado de player el valor 20
                     dice.forceNumber(player, 20);
                 }
@@ -412,6 +452,13 @@ void Parchis::movePiece(color player, int piece, int dice_number){
                     // Añadir al dado de player el valor 10
                     dice.forceNumber(player, 10);
                 }
+                if(isWall(final_box) != none){
+                    power_bars[current_player].increasePower(10);
+                }
+                if(isSafeBox(final_box)){
+                    power_bars[current_player].increasePower(5);
+                }
+                
             }else{
                 if(!playground_mode) this->dice.removeNumber(player, original_dice_number);
                 this->update_dice = true;
@@ -572,6 +619,209 @@ void Parchis::movePiece(color player, int piece, int dice_number){
                         }
                     }
                     break;
+                    case boom:
+                    {
+                        this->horn_move = true;
+                        vector<pair<color,int>> deleted_pieces;
+                        int max_dist = 0;
+                        vector<color> player_colors = getPlayerColors(current_player);
+                        for (int i = 0; i < player_colors.size(); i++){
+                            color c = player_colors[i];
+                            for (int j = 0; j < board.getPieces(c).size(); j++){
+                                int dist = distanceToGoal(c,j);
+                                if(dist > max_dist and board.getPiece(c,j).get_box().type != home){
+                                    player = c;
+                                    piece = j;
+                                    max_dist = dist;
+                                }
+                            }
+                        }
+                        
+                        if(max_dist > 0){
+                            //Metemos la peor ficha en deleted pieces
+                            deleted_pieces.push_back(pair<color, int>(player, piece));
+                            
+                            for (int i = 0; i < game_colors.size(); i++){
+                                color c = game_colors[i];
+                                if (c != player){
+                                    for (int j = 0; j < board.getPieces(c).size(); j++){
+                                        Piece horny_piece = board.getPiece(c, j);
+                                        if(horny_piece.get_type() != boo_piece and horny_piece.get_type() != mega_piece and horny_piece.get_type() != star_piece and horny_piece.get_box().type != goal){
+                                            int dist_paforward = distanceBoxtoBox(player, piece, c, j);
+                                            int dist_paantes = distanceBoxtoBox(c, j, player, piece);
+                                            if (dist_paforward <= 2 and dist_paforward >= 0 or dist_paantes <= 2 and dist_paantes >= 0){
+                                                deleted_pieces.push_back(pair<color, int>(c, j));
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            this->last_moves.push_back(tuple<color, int, Box, Box>(player, piece, piece_box, piece_box));
+
+                            for (int i = 0; i < deleted_pieces.size(); i++){
+                                Piece current_piece = board.getPiece(deleted_pieces[i].first, deleted_pieces[i].second);
+                                Box origin = board.getPiece(deleted_pieces[i].first, deleted_pieces[i].second).get_box();
+                                board.movePiece(deleted_pieces[i].first, deleted_pieces[i].second, Box(0, home, deleted_pieces[i].first));
+                                this->last_moves.push_back(tuple<color, int, Box, Box>(deleted_pieces[i].first, deleted_pieces[i].second, origin, Box(0, home, deleted_pieces[i].first)));
+                                this->pieces_destroyed_by_horn.push_back({deleted_pieces[i].first, deleted_pieces[i].second});
+                            }
+                        }
+                    }
+                    break;
+                    case catapum:
+                    {
+                        this->horn_move = true;
+                        vector<pair<color,int>> deleted_pieces;
+                        int min_dist = 1000;
+                        vector<color> player_colors = getPlayerColors(current_player);
+                        for (int i = 0; i < player_colors.size(); i++){
+                            color c = player_colors[i];
+                            for (int j = 0; j < board.getPieces(c).size(); j++){
+                                int dist = distanceToGoal(c,j);
+                                if(dist < min_dist and board.getPiece(c,j).get_box().type != goal){
+                                    player = c;
+                                    piece = j;
+                                    min_dist = dist;
+                                }
+                            }
+                        }
+                        
+                        if(min_dist < 1000){
+                            //Metemos la peor ficha en deleted pieces
+                            deleted_pieces.push_back(pair<color, int>(player, piece));
+                            
+                            for (int i = 0; i < game_colors.size(); i++){
+                                color c = game_colors[i];
+                                if (c != player){
+                                    for (int j = 0; j < board.getPieces(c).size(); j++){
+                                        Piece horny_piece = board.getPiece(c, j);
+                                        if(horny_piece.get_type() != boo_piece and horny_piece.get_type() != mega_piece and horny_piece.get_type() != star_piece and horny_piece.get_box().type != goal){
+                                            int dist_paforward = distanceBoxtoBox(player, piece, c, j);
+                                            int dist_paantes = distanceBoxtoBox(c, j, player, piece);
+                                            if (dist_paforward <= 2 and dist_paforward >= 0 or dist_paantes <= 2 and dist_paantes >= 0){
+                                                deleted_pieces.push_back(pair<color, int>(c, j));
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            this->last_moves.push_back(tuple<color, int, Box, Box>(player, piece, piece_box, piece_box));
+
+                            for (int i = 0; i < deleted_pieces.size(); i++){
+                                Piece current_piece = board.getPiece(deleted_pieces[i].first, deleted_pieces[i].second);
+                                Box origin = board.getPiece(deleted_pieces[i].first, deleted_pieces[i].second).get_box();
+                                board.movePiece(deleted_pieces[i].first, deleted_pieces[i].second, Box(0, home, deleted_pieces[i].first));
+                                this->last_moves.push_back(tuple<color, int, Box, Box>(deleted_pieces[i].first, deleted_pieces[i].second, origin, Box(0, home, deleted_pieces[i].first)));
+                                this->pieces_destroyed_by_horn.push_back({deleted_pieces[i].first, deleted_pieces[i].second});
+                            }
+                        }
+                    }
+                    break;
+                    case boomboom:
+                    {
+                        this->horn_move = true;
+                        vector<pair<color,int>> deleted_pieces;
+                        vector<color> player_colors = getPlayerColors(current_player);
+                        for (int i = 0; i < player_colors.size(); i++){
+                            int min_dist = 1000;
+                            color c = player_colors[i];
+                            int best_c;
+                            int best_j;
+                            for (int j = 0; j < board.getPieces(c).size(); j++){
+                                int dist = distanceToGoal(c,j);
+                                if(dist < min_dist and board.getPiece(c,j).get_box().type != goal){
+                                    player = c;
+                                    piece = j;
+                                    min_dist = dist;
+                                }
+                            }
+                            
+                            if(min_dist < 1000){
+                                deleted_pieces.push_back(pair<color, int>(player, piece));
+                            
+                                for (int i = 0; i < game_colors.size(); i++){
+                                    color c = game_colors[i];
+                                    if (c != player){
+                                        for (int j = 0; j < board.getPieces(c).size(); j++){
+                                            Piece horny_piece = board.getPiece(c, j);
+                                            if(horny_piece.get_type() != boo_piece and horny_piece.get_type() != mega_piece and horny_piece.get_type() != star_piece and horny_piece.get_box().type != goal){
+                                                int dist_paforward = distanceBoxtoBox(player, piece, c, j);
+                                                int dist_paantes = distanceBoxtoBox(c, j, player, piece);
+                                                if (dist_paforward <= 2 and dist_paforward >= 0 or dist_paantes <= 2 and dist_paantes >= 0){
+                                                    deleted_pieces.push_back(pair<color, int>(c, j));
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                this->last_moves.push_back(tuple<color, int, Box, Box>(player, piece, piece_box, piece_box));
+
+                                for (int i = 0; i < deleted_pieces.size(); i++){
+                                    Piece current_piece = board.getPiece(deleted_pieces[i].first, deleted_pieces[i].second);
+                                    Box origin = board.getPiece(deleted_pieces[i].first, deleted_pieces[i].second).get_box();
+                                    board.movePiece(deleted_pieces[i].first, deleted_pieces[i].second, Box(0, home, deleted_pieces[i].first));
+                                    this->last_moves.push_back(tuple<color, int, Box, Box>(deleted_pieces[i].first, deleted_pieces[i].second, origin, Box(0, home, deleted_pieces[i].first)));
+                                    this->pieces_destroyed_by_horn.push_back({deleted_pieces[i].first, deleted_pieces[i].second});
+                                }
+                            }
+                            
+                        }
+                    }
+                    break;
+                    case catapumchimpum:
+                    {
+                        this->horn_move = true;
+                        vector<pair<color,int>> deleted_pieces;
+                        vector<color> player_colors = getPlayerColors(current_player);
+                        vector<int> dist_colors;
+                        for (int i = 0; i < player_colors.size(); i++){
+                            int dist = 0;
+                            color c = player_colors[i];   
+                            for (int j = 0; j < board.getPieces(c).size(); j++){
+                                if(board.getPiece(c,j).get_box().type != goal){
+                                    dist += distanceToGoal(c,j);
+                                }
+                            }
+                            
+                            dist_colors.push_back(dist);
+                        }
+                        
+                        player = player_colors[dist_colors[0] < dist_colors[1] ? 0 : 1];
+                        for (piece = 0; piece < board.getPieces(player).size(); piece++){
+                            deleted_pieces.push_back(pair<color, int>(player, piece));
+                            
+                            for (int i = 0; i < game_colors.size(); i++){
+                                color c = game_colors[i];
+                                if (c != player){
+                                    for (int j = 0; j < board.getPieces(c).size(); j++){
+                                        Piece horny_piece = board.getPiece(c, j);
+                                        if(horny_piece.get_type() != boo_piece and horny_piece.get_type() != mega_piece and horny_piece.get_type() != star_piece and horny_piece.get_box().type != goal){
+                                            int dist_paforward = distanceBoxtoBox(player, piece, c, j);
+                                            int dist_paantes = distanceBoxtoBox(c, j, player, piece);
+                                            if (dist_paforward <= 2 and dist_paforward >= 0 or dist_paantes <= 2 and dist_paantes >= 0){
+                                                deleted_pieces.push_back(pair<color, int>(c, j));
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            this->last_moves.push_back(tuple<color, int, Box, Box>(player, piece, piece_box, piece_box));
+
+                            for (int i = 0; i < deleted_pieces.size(); i++){
+                                Piece current_piece = board.getPiece(deleted_pieces[i].first, deleted_pieces[i].second);
+                                Box origin = board.getPiece(deleted_pieces[i].first, deleted_pieces[i].second).get_box();
+                                board.movePiece(deleted_pieces[i].first, deleted_pieces[i].second, Box(0, home, deleted_pieces[i].first));
+                                this->last_moves.push_back(tuple<color, int, Box, Box>(deleted_pieces[i].first, deleted_pieces[i].second, origin, Box(0, home, deleted_pieces[i].first)));
+                                this->pieces_destroyed_by_horn.push_back({deleted_pieces[i].first, deleted_pieces[i].second});
+                            }
+                        }
+                        
+                    }
+                    break;         
                     case horn:
                     {
                         this->horn_move = true;

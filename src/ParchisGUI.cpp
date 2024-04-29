@@ -271,9 +271,16 @@ ParchisGUI::ParchisGUI(Parchis &model)
     this->tSkipBt.setSmooth(true);
     this->tButtons.loadFromFile("data/textures/buttons.png");
     this->tButtons.setSmooth(true);
+    this->tPowerBar.loadFromFile("data/textures/powerbar.png");
+    this->tPowerBar.setSmooth(true);
 
     this->tBOOM.loadFromFile("data/textures/JustACircle.png");
     this->tBOOM.setSmooth(true);
+    
+        
+    if(!this->window_fonts.loadFromFile("data/fonts/arial.ttf")){
+        std::cout << "Error loading font" << std::endl;
+    }
 
     //Definimos los sprites
     this->background = Sprite(tBackground);
@@ -316,6 +323,7 @@ ParchisGUI::ParchisGUI(Parchis &model)
     //Creación de los dados
     Vector2i ini_pos(900, 50);
     Vector2i offset(70,80);
+    Vector2i offset_powerbar(0, 10);
 
     vector<color> dice_colors = {yellow, blue};
     for (int i = 0; i < dice_colors.size(); i++){
@@ -331,12 +339,25 @@ ParchisGUI::ParchisGUI(Parchis &model)
         //special_10_20_dice[colors[i]].setModelColor(colors[i]);
         special_10_20_dice[dice_colors[i]].push_back(DiceSprite(tDices, -1, dice_colors[i]));
         special_10_20_dice[dice_colors[i]][0].setPosition(ini_pos.x + offset.x*7, ini_pos.y + offset.y*2*i);
+        
+        powerBarBackground[dice_colors[i]] = Sprite(tPowerBar);  // Tamaño del fondo de la barra
+        //powerBarBackground[dice_colors[i]].setFillColor(sf::Color(50, 50, 50));  // Color del fondo
+        powerBarBackground[dice_colors[i]].setScale(0.45, 0.45);
+        powerBarBackground[dice_colors[i]].setPosition(ini_pos.x, ini_pos.y + offset.y*(2*i+1) - offset_powerbar.y);  // Posición del fondo en la ventana
+        
+        powerBar[dice_colors[i]] = RectangleShape(sf::Vector2f(600.f, 80.f));  // Tamaño inicial de la barra de progreso
+        powerBar[dice_colors[i]].setScale(0.45, 0.45);
+        powerBar[dice_colors[i]].setFillColor(sf::Color(150, 150, 255));  // Color de la barra
+        powerBar[dice_colors[i]].setPosition(ini_pos.x + offset.x, ini_pos.y + offset.y*(2*i+1) - offset_powerbar.y+44*0.45);  // Posición de la barra en la ventana
+        
+        
+        texts[dice_colors[i]].setFont(window_fonts); // asignar la fuente al texto
+        texts[dice_colors[i]].setString(to_string(model.getPowerBar(dice_colors[i]).getPower())); // establecer el texto que se mostrará
+        texts[dice_colors[i]].setCharacterSize(24); // establecer el tamaño del texto
+        texts[dice_colors[i]].setFillColor(sf::Color::Black); // establecer el color del texto
+        texts[dice_colors[i]].setStyle(sf::Text::Bold); // establecer estilo del texto, e.g., negrita
+        texts[dice_colors[i]].setPosition(ini_pos.x + offset.x + 500*0.45, ini_pos.y + offset.y*(2*i+1) - offset_powerbar.y+44*0.45);
     }
-
-
-
-
-
 
     // Creación de los botones
     this->skip_turn_button = SkipTurnButton(tSkipBt);
@@ -388,6 +409,7 @@ ParchisGUI::ParchisGUI(Parchis &model)
 
     dice_view = View(FloatRect(800.f, 50.f, 720.f, 320.f));
     dice_view.setViewport(FloatRect(800.f / 1600.f, 50.f / 800.f, 720.f / 1600.f, 320.f / 800.f));
+    
 
     bt_panel_view = View(FloatRect(850.f, 400.f, 600.f, 600.f));
     bt_panel_view.setViewport(FloatRect(850.f / 1600.f, 400.f / 800.f, 600.f / 1600.f, 600.f / 800.f));
@@ -989,6 +1011,14 @@ void ParchisGUI::paint(){
         else
             this->draw(*dice_dynamic_drawable_sprites[i]);
     }
+    
+    // Pintamos la powerbar
+    this->draw(powerBar[blue]);
+    this->draw(powerBar[yellow]);
+    this->draw(powerBarBackground[blue]);
+    this->draw(powerBarBackground[yellow]);
+    this->draw(texts[blue]);
+    this->draw(texts[yellow]);
 
     // Dibujamos elementos de la vista de los botones
     this->setView(bt_panel_view);
@@ -1114,6 +1144,42 @@ void ParchisGUI::updateSprites(){
             special_10_20_dice[c][0].setNumber(-1);
         }
     }
+    
+    //Actualizamos powerbar
+    for (int i = 0; i < dice_colors.size(); i++)
+    {
+        int power = model->getPowerBar(dice_colors[i]).getPower();
+        powerBar[dice_colors[i]].setSize(sf::Vector2f(600.f * power/100, 80.f));
+        if (power < 50){
+            powerBar[dice_colors[i]].setFillColor(sf::Color(150, 150, 255));
+        }else if (power < 60){
+            powerBar[dice_colors[i]].setFillColor(sf::Color(255, 69, 0));
+        }else if (power < 65){
+            powerBar[dice_colors[i]].setFillColor(sf::Color(255, 0, 0));
+        }else if (power < 70){
+            powerBar[dice_colors[i]].setFillColor(sf::Color(150, 150, 255));
+        }else if (power < 75){
+            powerBar[dice_colors[i]].setFillColor(sf::Color(255, 69, 0));
+        }else if (power < 80){
+            powerBar[dice_colors[i]].setFillColor(sf::Color(64, 64, 64));
+        }else if (power < 85){
+            powerBar[dice_colors[i]].setFillColor(sf::Color(255, 0, 0));
+        }else if (power < 90){
+            powerBar[dice_colors[i]].setFillColor(sf::Color(0, 0, 255));
+        }else if (power < 95){
+            powerBar[dice_colors[i]].setFillColor(sf::Color(255, 0, 0));
+        }else if (power < 100){
+            powerBar[dice_colors[i]].setFillColor(sf::Color(255, 215, 0));
+        }else{
+            powerBar[dice_colors[i]].setFillColor(sf::Color(255, 0, 0));
+        }
+        
+        
+        
+        texts[dice_colors[i]].setString(to_string(power));
+    }
+    
+    
 
     for(int i = 0; i < colors.size(); i++){
         color c = colors[i];

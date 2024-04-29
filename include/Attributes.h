@@ -134,6 +134,10 @@ enum item_type {star = 101,
                 shock = 108,
                 horn = 109,
                 banana = 110,
+                boom = 111,
+                catapum = 112,
+                boomboom = 113,
+                catapumchimpum = 114,
                 not_an_item = -1};
 
 /**

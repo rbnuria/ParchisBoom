@@ -338,6 +338,22 @@ class Parchis{
          * @return const vector<int>&
          */
         const Dice & getDice () const;
+        
+        /**
+         * @brief Función que devuelve el atribute power bar de un jugador.
+         *
+         * @param player
+         * @return const PowerBar &
+         */
+        const PowerBar & getPowerBar(int player) const;
+        
+        /**
+         * @brief Función que devuelve el atribute power bar de un color.
+         *
+         * @param c
+         * @return const PowerBar &
+         */
+        const PowerBar & getPowerBar(color c) const;
 
 
          /**

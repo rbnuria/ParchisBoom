@@ -50,8 +50,11 @@ private:
     Texture tDices;
     Texture tSkipBt;
     Texture tButtons;
+    Texture tPowerBar;
 
     Texture tBOOM;
+    
+    Font window_fonts;
 
     //Sprites' definitions
     Sprite background;
@@ -61,6 +64,9 @@ private:
     map <color, vector<DiceSprite>> dices;
     map <color, vector<DiceSprite>> special_dices;
     map <color, vector<DiceSprite>> special_10_20_dice;
+    map <color, Sprite> powerBarBackground;
+    map <color, RectangleShape> powerBar;
+    map <color, Text> texts;
     // vector<BoardSprite> boards;
     BoardSprite board;
 
