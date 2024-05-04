@@ -51,7 +51,7 @@ private:
     Texture tSkipBt;
     Texture tButtons;
     Texture tPowerBar;
-
+    Texture tPowerBarIcons;
     Texture tBOOM;
     
     Font window_fonts;
@@ -67,6 +67,7 @@ private:
     map <color, Sprite> powerBarBackground;
     map <color, RectangleShape> powerBar;
     map <color, Text> texts;
+    map <color, Sprite> powerbar_icons;
     // vector<BoardSprite> boards;
     BoardSprite board;
 

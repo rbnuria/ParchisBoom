@@ -273,7 +273,8 @@ ParchisGUI::ParchisGUI(Parchis &model)
     this->tButtons.setSmooth(true);
     this->tPowerBar.loadFromFile("data/textures/powerbar.png");
     this->tPowerBar.setSmooth(true);
-
+    this->tPowerBarIcons.loadFromFile("data/textures/Items-bomb.png");
+    this->tPowerBarIcons.setSmooth(true);
     this->tBOOM.loadFromFile("data/textures/JustACircle.png");
     this->tBOOM.setSmooth(true);
     
@@ -344,11 +345,18 @@ ParchisGUI::ParchisGUI(Parchis &model)
         //powerBarBackground[dice_colors[i]].setFillColor(sf::Color(50, 50, 50));  // Color del fondo
         powerBarBackground[dice_colors[i]].setScale(0.45, 0.45);
         powerBarBackground[dice_colors[i]].setPosition(ini_pos.x, ini_pos.y + offset.y*(2*i+1) - offset_powerbar.y);  // Posición del fondo en la ventana
+    
         
         powerBar[dice_colors[i]] = RectangleShape(sf::Vector2f(600.f, 80.f));  // Tamaño inicial de la barra de progreso
         powerBar[dice_colors[i]].setScale(0.45, 0.45);
         powerBar[dice_colors[i]].setFillColor(sf::Color(150, 150, 255));  // Color de la barra
         powerBar[dice_colors[i]].setPosition(ini_pos.x + offset.x, ini_pos.y + offset.y*(2*i+1) - offset_powerbar.y+44*0.45);  // Posición de la barra en la ventana
+        
+        powerbar_icons[dice_colors[i]] = Sprite(tPowerBarIcons);  // Tamaño del fondo de la barra
+        //powerBarBackground[dice_colors[i]].setFillColor(sf::Color(50, 50, 50));  // Color del fondo
+        powerbar_icons[dice_colors[i]].setTextureRect(IntRect(3*120, 0, 120, 120));
+        powerbar_icons[dice_colors[i]].setScale(0.55, 0.55);
+        powerbar_icons[dice_colors[i]].setPosition(ini_pos.x + 0.08*120, ini_pos.y + offset.y*(2*i+1) - offset_powerbar.y + 0.08*120);  
         
         
         texts[dice_colors[i]].setFont(window_fonts); // asignar la fuente al texto
@@ -1019,6 +1027,8 @@ void ParchisGUI::paint(){
     this->draw(powerBarBackground[yellow]);
     this->draw(texts[blue]);
     this->draw(texts[yellow]);
+    this->draw(powerbar_icons[blue]);
+    this->draw(powerbar_icons[yellow]);
 
     // Dibujamos elementos de la vista de los botones
     this->setView(bt_panel_view);
@@ -1152,26 +1162,37 @@ void ParchisGUI::updateSprites(){
         powerBar[dice_colors[i]].setSize(sf::Vector2f(600.f * power/100, 80.f));
         if (power < 50){
             powerBar[dice_colors[i]].setFillColor(sf::Color(150, 150, 255));
+            powerbar_icons[dice_colors[i]].setTextureRect(IntRect(3*120, 0, 120, 120));
         }else if (power < 60){
             powerBar[dice_colors[i]].setFillColor(sf::Color(255, 69, 0));
+            powerbar_icons[dice_colors[i]].setTextureRect(IntRect(5*120, 0, 120, 120));
         }else if (power < 65){
             powerBar[dice_colors[i]].setFillColor(sf::Color(255, 0, 0));
+            powerbar_icons[dice_colors[i]].setTextureRect(IntRect(2*120, 0, 120, 120));
         }else if (power < 70){
             powerBar[dice_colors[i]].setFillColor(sf::Color(150, 150, 255));
+            powerbar_icons[dice_colors[i]].setTextureRect(IntRect(6*120, 0, 120, 120));
         }else if (power < 75){
             powerBar[dice_colors[i]].setFillColor(sf::Color(255, 69, 0));
+            powerbar_icons[dice_colors[i]].setTextureRect(IntRect(5*120, 0, 120, 120));
         }else if (power < 80){
             powerBar[dice_colors[i]].setFillColor(sf::Color(64, 64, 64));
+            powerbar_icons[dice_colors[i]].setTextureRect(IntRect(4*120, 0, 120, 120));
         }else if (power < 85){
             powerBar[dice_colors[i]].setFillColor(sf::Color(255, 0, 0));
+            powerbar_icons[dice_colors[i]].setTextureRect(IntRect(18*120, 0, 120, 120));
         }else if (power < 90){
             powerBar[dice_colors[i]].setFillColor(sf::Color(0, 0, 255));
+            powerbar_icons[dice_colors[i]].setTextureRect(IntRect(1*120, 0, 120, 120));
         }else if (power < 95){
             powerBar[dice_colors[i]].setFillColor(sf::Color(255, 0, 0));
+            powerbar_icons[dice_colors[i]].setTextureRect(IntRect(16*120, 0, 120, 120));
         }else if (power < 100){
             powerBar[dice_colors[i]].setFillColor(sf::Color(255, 215, 0));
+            powerbar_icons[dice_colors[i]].setTextureRect(IntRect(0*120, 0, 120, 120));
         }else{
             powerBar[dice_colors[i]].setFillColor(sf::Color(255, 0, 0));
+            powerbar_icons[dice_colors[i]].setTextureRect(IntRect(17*120, 0, 120, 120));
         }
         
         
@@ -1536,7 +1557,7 @@ void ParchisGUI::queueMove(color col, int id, Box origin, Box dest, void (Parchi
 
         // Si el destino es casa y hay algún flag de red_shell/blue_shell/star move activo, se encola la explosión.
         if(dest.type == home){
-            if(model->isRedShellMove() or model->isBlueShellMove() or model->isStarMove()){
+            if(model->isRedShellMove() or model->isBlueShellMove() or model->isStarMove() or model->isHornMove()){
                 Vector2f animate_pos = (Vector2f)box2position.at(dest)[id];
                 Sprite *animate_sprite;
                 if(model->isRedShellMove())
@@ -1544,6 +1565,8 @@ void ParchisGUI::queueMove(color col, int id, Box origin, Box dest, void (Parchi
                 else if(model->isBlueShellMove())
                     animate_sprite = &blue_boom[current_boom_sprite];
                 else if(model->isStarMove())
+                    animate_sprite = &golden_boom[current_boom_sprite];
+                else if(model->isHornMove())
                     animate_sprite = &golden_boom[current_boom_sprite];
 
                 current_boom_sprite = (current_boom_sprite + 1) % BOOM_SPRITE_LIMIT;
@@ -1555,16 +1578,16 @@ void ParchisGUI::queueMove(color col, int id, Box origin, Box dest, void (Parchi
             }
         }
     }
-
-    else if(model->isHornMove()){
-        // La ficha que ha pegado el bocinazo genera una explosión.
-        Vector2f animate_pos = (Vector2f)box2position.at(origin)[0] + Vector2f(horn_boom.getLocalBounds().width/2, horn_boom.getLocalBounds().height/2);
-        horn_boom.setPosition(animate_pos);
-        horn_boom.setOrigin(horn_boom.getLocalBounds().width/2, horn_boom.getLocalBounds().height/2);
-        shared_ptr<ExplosionAnimator> animator = make_shared<ExplosionAnimator>(horn_boom, 1.f, 6.f, animation_time);
-        animations_ch5.push(animator);
-        playHornSound();
-    }
+    
+    // else if(model->isHornMove()){
+    //     // La ficha que ha pegado el bocinazo genera una explosión.
+    //     Vector2f animate_pos = (Vector2f)box2position.at(origin)[0] + Vector2f(horn_boom.getLocalBounds().width/2, horn_boom.getLocalBounds().height/2);
+    //     horn_boom.setPosition(animate_pos);
+    //     horn_boom.setOrigin(horn_boom.getLocalBounds().width/2, horn_boom.getLocalBounds().height/2);
+    //     shared_ptr<ExplosionAnimator> animator = make_shared<ExplosionAnimator>(horn_boom, 1.f, 6.f, animation_time);
+    //     animations_ch5.push(animator);
+    //     playHornSound();
+    // }
     else{
         // Buscamos colisiones.
         vector<pair<color, int>> occupation = this->model->boxState(dest);
