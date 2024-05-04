@@ -283,8 +283,6 @@ void Parchis::movePiece(color player, int piece, int dice_number){
             if(dice_number == 100){
                 int power_bar = power_bars[current_player].getPower();
 
-                cout << "***************current power: " << power_bar << endl;
-
                 if(power_bar < 50){
                     dice_number = 5 + power_bar/5;
                 }else if(power_bar < 60){
@@ -313,18 +311,6 @@ void Parchis::movePiece(color player, int piece, int dice_number){
                     dice_number = catapumchimpum;
                 }
                 
-                // if (power_bar <= 50){
-                //     dice_number = 2 + power_bar/10;
-                // }else if (power_bar <= 80){
-                //     //BOOM
-                //     dice_number = red_shell;
-                // }else{
-                //     //STAR
-                //     dice_number = star;
-                // }
-
-                cout << "***DICE NUMBER: " << dice_number << endl;
-
                 power_bars[current_player].emptyPowerBar();
 
             }
@@ -869,9 +855,6 @@ void Parchis::movePiece(color player, int piece, int dice_number){
             turn++;
             last_action = tuple<color, int, int>(player, piece, dice_number);
 
-            cout << "***************POWER 0: " << power_bars[0].getPower() << endl;
-            cout << "***************POWER 1: " << power_bars[1].getPower() << endl;
-
         }
         else{
             illegal_move_player = current_player;
@@ -1346,6 +1329,8 @@ bool Parchis::gameStep(){
     cout << "----------------" << endl;
     cout << "Turno: " << turn << endl;
     cout << "Jugador actual: " << this->current_player+1 << " (" << this->players.at(current_player)->getName() << ")" << endl;
+    cout << "Power player 1: " << power_bars[0].getPower() << endl;
+    cout << "Power player 2: " << power_bars[1].getPower() << endl;
     cout << "----------------" << endl;
 
     // El jugador actual hace su movimiento.
