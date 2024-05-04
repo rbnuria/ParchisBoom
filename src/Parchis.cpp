@@ -284,7 +284,7 @@ void Parchis::movePiece(color player, int piece, int dice_number){
                 int power_bar = power_bars[current_player].getPower();
 
                 if(power_bar < 50){
-                    dice_number = 5 + power_bar/5;
+                    dice_number = 7 + power_bar/7;
                 }else if(power_bar < 60){
                     dice_number = red_shell;
                 }else if(power_bar < 65){
