@@ -1589,13 +1589,13 @@ ParchisBros::Iterator::Iterator(ParchisBros & out, shared_ptr<Parchis> &p, color
     this->last_id_piece = last_id_piece;
     this->last_dice = last_dice;
     if (last_dice != -1)
-        this->dice_value = container->parent->getNormalDices(container->parent->getCurrentColor()).at(last_dice);
+        this->dice_value = container->parent->getAvailableNormalDices(container->parent->getCurrentColor()).at(last_dice);
 }
 
 ParchisBros::Iterator & ParchisBros::Iterator::operator++(){
     actual = make_shared<Parchis>(container->parent->generateNextMoveDescending(last_c_piece, last_id_piece, last_dice));
     if (last_dice != -1)
-        this->dice_value = container->parent->getNormalDices(container->parent->getCurrentColor()).at(last_dice);
+        this->dice_value = container->parent->getAvailableNormalDices(container->parent->getCurrentColor()).at(last_dice);
     return *this;
 }
 
