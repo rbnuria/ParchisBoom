@@ -481,6 +481,9 @@ int main(int argc, char const *argv[]){
         else if(type_j1 == "AI"){ // Inicializo jugador 1 AI
             p1 = make_shared<AIPlayer>(name_j1, id_j1);
         }
+        else if(type_j1 == "LNINJA"){ // Inicializo jugador 1 LNINJA
+            p1 = make_shared<Ninja>(name_j1, id_j1);
+        }
         else if(type_j1 == "REMOTE"){ // Inicializo j1 a cliente remoto
             shared_ptr<ParchisClient> client= make_shared<ParchisClient>();
             // Comienzo la conexión al puerto e ip especificadas.
@@ -521,6 +524,9 @@ int main(int argc, char const *argv[]){
         }
         else if(type_j2 == "AI"){ // Inicializo el jugador 2 AI
             p2 = make_shared<AIPlayer>(name_j2, id_j2);
+        }
+        else if(type_j2 == "LNINJA"){ // Inicializo el jugador 2 LNINJA
+            p2 = make_shared<Ninja>(name_j2, id_j2);
         }
         else if(type_j2 == "REMOTE"){ // Inicializo j2 a cliente remoto
             shared_ptr<ParchisClient> client= make_shared<ParchisClient>();
