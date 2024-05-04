@@ -276,6 +276,8 @@ void Parchis::movePiece(color player, int piece, int dice_number){
         this->pieces_destroyed_by_red_shell.clear();
         this->pieces_destroyed_by_blue_shell.clear();
         this->pieces_destroyed_by_horn.clear();
+        
+        int special_dice_move = 0;
 
         if(isLegalMove(board.getPiece(player, piece), dice_number)){
             //Comprobamos si se usa el dado especial
@@ -284,14 +286,16 @@ void Parchis::movePiece(color player, int piece, int dice_number){
                 int power_bar = power_bars[current_player].getPower();
 
                 if(power_bar < 50){
-                    dice_number = 7 + power_bar/7;
+                    special_dice_move = 7 + power_bar/7;
+                    dice_number = mushroom;
                 }else if(power_bar < 60){
                     dice_number = red_shell;
                 }else if(power_bar < 65){
                     //BOOM PEOR FICHA
                     dice_number = boom;
                 }else if(power_bar < 70){
-                    dice_number = 25;
+                    special_dice_move = 25;
+                    dice_number = mushroom;
                 }else if(power_bar < 75){
                     dice_number = red_shell;
                 }else if(power_bar < 80){
@@ -472,7 +476,7 @@ void Parchis::movePiece(color player, int piece, int dice_number){
                     case mushroom:
                     {
                         this->mushroom_move = true;
-                        int move_number = 8;
+                        int move_number = special_dice_move;
                         Box final_box;
                         // Si la ficha está a menos de 40 casillas de su meta, del tirón.
                         if(distanceToGoal(player, piece) <= move_number){
@@ -1539,6 +1543,8 @@ Parchis Parchis::generateNextMoveDescending(color & c_piece,  int & id_piece, in
             }
         }
     }while(change_dice);
+    
+    //cout << c_piece << " - " << id_piece << " - " << curr_dice_value << endl;
 
     Parchis next_move(*this);
     next_move.movePiece(c_piece, id_piece, curr_dice_value);

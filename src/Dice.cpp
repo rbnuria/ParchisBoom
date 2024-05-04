@@ -7,8 +7,8 @@
 Dice::Dice(){
     //Asigna por defecto los 5 valores del dado a cada jugador.
     this->dice =  map <color, vector <vector<int> >> {
-        {color::blue,   {{1,2,3,4,5,6,100}}},
-        {color::yellow, {{1,2,3,4,5,6,100}}}
+        {color::blue,   {{1,2,4,5,6,100}}},
+        {color::yellow, {{1,2,4,5,6,100}}}
     };
 };
 
