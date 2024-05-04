@@ -763,13 +763,12 @@ void Parchis::movePiece(color player, int piece, int dice_number){
                         vector<pair<color,int>> deleted_pieces;
                         vector<color> player_colors = getPlayerColors(current_player);
                         vector<int> dist_colors;
+                        //Para elegir qué color es mejor, cuentan todas las fichas (incluidas meta y casa)
                         for (int i = 0; i < player_colors.size(); i++){
                             int dist = 0;
                             color c = player_colors[i];   
                             for (int j = 0; j < board.getPieces(c).size(); j++){
-                                if(board.getPiece(c,j).get_box().type != goal){
-                                    dist += distanceToGoal(c,j);
-                                }
+                                dist += distanceToGoal(c,j);
                             }
                             
                             dist_colors.push_back(dist);
@@ -777,7 +776,10 @@ void Parchis::movePiece(color player, int piece, int dice_number){
                         
                         player = player_colors[dist_colors[0] < dist_colors[1] ? 0 : 1];
                         for (piece = 0; piece < board.getPieces(player).size(); piece++){
-                            deleted_pieces.push_back(pair<color, int>(player, piece));
+                            //Eliminamos todas las fichas del mejor color, menos las que ya están en la meta
+                            if(board.getPiece(player,piece).get_box().type != goal){
+                                deleted_pieces.push_back(pair<color, int>(player, piece));
+                            }
                             
                             for (int i = 0; i < game_colors.size(); i++){
                                 color c = game_colors[i];
