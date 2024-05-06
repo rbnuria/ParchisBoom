@@ -124,7 +124,8 @@ inline bool operator ==(const Box & a, const Box & b){
 
 
 //Enumerado de los diferentes tipos de objetos speciales que aparecen en el tablero.
-enum item_type {star = 101,
+enum item_type {power = 100,
+                star = 101,
                 boo = 102,
                 bullet = 103,
                 red_shell = 104,

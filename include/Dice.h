@@ -13,9 +13,8 @@ class Dice{
         /**
          * @brief Dados para cada jugador. Los dados se agrupan por capas.
          *
-         * - Capa 1: Dados clásicos del 1-6 (quitando el 3).
-         * - Capa 2: Dados especiales adquiridos por el jugador.
-         * - Capa 3: Dados forzados (mover 10 o 20)
+         * - Capa 1: Dados clásicos del 1-6 (quitando el 3) + dado especial.
+         * - Capa 2: Dados forzados (mover 10 o 20)
          *
          */
         map <color, vector<vector <int>> > dice;
