@@ -334,7 +334,7 @@ ParchisGUI::ParchisGUI(Parchis &model)
             dices[dice_colors[i]][j-1].setPosition(pos.x, pos.y);
         }
 
-        dices[dice_colors[i]].push_back(DiceSprite(tDices, 100, dice_colors[i]));
+        dices[dice_colors[i]].push_back(DiceSprite(tDices, power, dice_colors[i]));
         dices[dice_colors[i]][6].setPosition(ini_pos.x + offset.x*6, ini_pos.y + offset.y*2*i);
         //special_10_20_dice[colors[i]].setNumber(20);
         //special_10_20_dice[colors[i]].setModelColor(colors[i]);
