@@ -499,7 +499,7 @@ void Parchis::movePiece(color player, int piece, int dice_number){
                     case bullet:
                     {
                         this->bullet_move = true;
-                        board.setPieceType(player, piece, normal_piece);
+                        //board.setPieceType(player, piece, normal_piece);
                         int move_number = 40;
                         // Si la ficha está en su home se saca a su casilla inicial primero.
                         if(current_piece.get_box().type == home){
