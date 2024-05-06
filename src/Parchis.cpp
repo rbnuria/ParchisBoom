@@ -471,7 +471,7 @@ void Parchis::movePiece(color player, int piece, int dice_number){
                     case star:
                     //Convertimos la ficha a especial
                         board.setPieceType(player, piece, star_piece);
-                        board.setPieceTurnsLeft(player, piece, 4);
+                        board.setPieceTurnsLeft(player, piece, 6);
                     break;
                     case mushroom:
                     {
