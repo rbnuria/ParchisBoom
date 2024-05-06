@@ -264,7 +264,9 @@ int main(int argc, char const *argv[]){
         }
         // Capturo si es modo playground.
         else if(strcmp(argv[i], "--playground") == 0){
-            playground = true;
+            cout << "NOPE :(" << endl;
+            exit(0);
+            //playground = true;
         }
         // Si los argumentos no son correctos....
         else{

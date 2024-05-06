@@ -809,7 +809,7 @@ GameSelector::GameSelector() : RenderWindow(VideoMode(1220, 750, VideoMode::getD
     this->use_gui_button = UseGUIButton(tButtons);
     this->player_id_button = PlayerIDButton(tButtons);
     this->start_game_button = StartGameButton(tButtons);
-    this->playground_button = PlaygroundButton(tButtons);
+    //this->playground_button = PlaygroundButton(tButtons);
 
     this->two_player_button.setPosition(50, 50);
 
@@ -833,7 +833,7 @@ GameSelector::GameSelector() : RenderWindow(VideoMode(1220, 750, VideoMode::getD
 
     this->start_game_button.setPosition(450, 650);
 
-    this->playground_button.setPosition(50, 650);
+    //this->playground_button.setPosition(50, 650);
 
     this->gs_buttons.push_back(&two_player_button);
     this->gs_buttons.push_back(&vs_heuristic_button);
@@ -850,7 +850,7 @@ GameSelector::GameSelector() : RenderWindow(VideoMode(1220, 750, VideoMode::getD
     this->gs_buttons.push_back(&use_gui_button);
     this->gs_buttons.push_back(&player_id_button);
     this->gs_buttons.push_back(&start_game_button);
-    this->gs_buttons.push_back(&playground_button);
+    //this->gs_buttons.push_back(&playground_button);
 
     this->exclusive_selection_buttons.push_back(&two_player_button);
     this->exclusive_selection_buttons.push_back(&vs_heuristic_button);

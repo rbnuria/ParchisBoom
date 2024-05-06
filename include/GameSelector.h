@@ -405,7 +405,7 @@ private:
     UseGUIButton use_gui_button;
     PlayerIDButton player_id_button;
     StartGameButton start_game_button;
-    PlaygroundButton playground_button;
+    //PlaygroundButton playground_button;
 
     TextBox * focused_textbox;
 
