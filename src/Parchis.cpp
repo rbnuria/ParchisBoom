@@ -278,6 +278,7 @@ void Parchis::movePiece(color player, int piece, int dice_number){
         this->pieces_destroyed_by_horn.clear();
         
         int special_dice_move = 0;
+        int real_dice_number = 0;
 
         if(isLegalMove(board.getPiece(player, piece), dice_number)){
             //Comprobamos si se usa el dado especial
@@ -885,7 +886,7 @@ void Parchis::movePiece(color player, int piece, int dice_number){
 
             nextTurn();
             turn++;
-            last_action = tuple<color, int, int>(player, piece, dice_number);
+            last_action = tuple<color, int, int>(player, piece, this->last_dice);
 
         }
         else{
