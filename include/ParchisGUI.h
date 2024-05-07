@@ -89,7 +89,7 @@ private:
     ExplosionSprite red_boom[BOOM_SPRITE_LIMIT];
     ExplosionSprite blue_boom[BOOM_SPRITE_LIMIT];
     ExplosionSprite golden_boom[BOOM_SPRITE_LIMIT];
-    ExplosionSprite horn_boom;
+    ExplosionSprite horn_boom[BOOM_SPRITE_LIMIT];
     int current_boom_sprite;
 
     //Sprites utilities to reduce the code.
