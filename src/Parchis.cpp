@@ -270,6 +270,8 @@ void Parchis::movePiece(color player, int piece, int dice_number){
         Piece current_piece = board.getPiece(player, piece);
 
         this->last_dice = dice_number;
+        color original_player = player;
+        int original_piece = piece;
         this->last_moves.clear();
 
         this->pieces_destroyed_by_star.clear();
@@ -886,7 +888,7 @@ void Parchis::movePiece(color player, int piece, int dice_number){
 
             nextTurn();
             turn++;
-            last_action = tuple<color, int, int>(player, piece, this->last_dice);
+            last_action = tuple<color, int, int>(original_player, original_piece, this->last_dice);
 
         }
         else{
