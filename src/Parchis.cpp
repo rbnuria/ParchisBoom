@@ -1417,39 +1417,6 @@ int Parchis::getWinner() const{
 
         break;
     }
-
-    //Recorro mis colores
-    /*vector<color> my_colors = this->getPlayerColors(0);
-    bool he_ganao = true;
-    for(int i = 0; i < my_colors.size() && he_ganao; i++){
-        color col = my_colors.at(i);
-        Box goal(0, box_type::goal, col);
-
-        if(boxState(goal).size() != board.getPieces(col).size()){
-            he_ganao = false;
-        }
-    }
-
-    if(he_ganao){
-        return 0;
-    }else{
-        // Recorro los colores de mi oponente
-        vector<color> other_colors = this->getPlayerColors(1);
-        bool he_perdio  = true;
-        for(int i = 0; i < other_colors.size() && he_perdio; i++){
-            color col = other_colors.at(i);
-            Box goal(0, box_type::goal, col);
-
-            if(boxState(goal).size() != board.getPieces(col).size()){
-                he_perdio = false;
-            }
-        }
-        if(he_perdio){
-            return 1;
-        }else{
-            return -1;
-        }
-    }*/
 }
 
 color Parchis::getColorWinner() const{
@@ -1756,17 +1723,6 @@ bool Parchis::isSafePiece(const color & player, const int & piece) const{
     return isSafeBox(this->board.getPiece(player, piece).get_box());
 }
 
-const color Parchis::isMegaWall(const Box & b) const{
-    if(b.type == home || b.type == goal) return none;
-
-    const vector<pair <color, int>> occupation = boxState(b);
-    if (occupation.size() == 1 && board.getPiece(occupation.at(0).first, occupation.at(0).second).get_type() == mega_piece){
-        return occupation.at(0).first;
-    }else{
-        return none;
-    }
-}
-
 const color Parchis::isWall(const Box & b) const{
     if(b.type == home || b.type == goal) return none;
 
@@ -1783,43 +1739,6 @@ const color Parchis::isWall(const Box & b) const{
     }else{
         return none;
     }
-}
-
-const vector<color> Parchis::anyMegaWall(const Box & b1, const Box & b2) const{
-    Box final_box;
-    if (b2.type == final_queue || b2.type == goal){
-        //Si el casilla destino es meta o pasillo final, la cambiamos por la última casilla
-        //antes de entrar al pasillo final.
-        switch (b2.col){
-            case blue:
-                final_box = Box(final_blue_box, normal, none);
-            break;
-            case red:
-                final_box = Box(final_red_box, normal, none);
-            break;
-            case green:
-                final_box = Box(final_green_box, normal, none);
-            break;
-            case yellow:
-                final_box = Box(final_yellow_box, normal, none);
-            break;
-        }
-    }else{
-        final_box = b2;
-    }
-    vector<color> walls;
-    bool reached_final_box = false;
-    if (b1.type == normal && final_box.num != b1.num){
-        for (int i = b1.num % 68 + 1; !reached_final_box; i = i%68 + 1){ //Vamos recorriendo casillas intermedias
-            reached_final_box = (final_box.num == i);
-            //Si hay un muro, lo añadimos al vector de muros.
-            color c = isMegaWall(Box(i, normal, none));
-            if(c != none){
-                walls.push_back(c);
-            }
-        }
-    }
-    return walls;
 }
 
 const vector<color> Parchis::anyWall(const Box & b1, const Box & b2) const{
@@ -1858,44 +1777,6 @@ const vector<color> Parchis::anyWall(const Box & b1, const Box & b2) const{
         }
     }
     return walls;
-}
-
-const vector<BoardTrap> Parchis::anyTrap(const Box & b1, const Box & b2) const{
-    Box final_box;
-    if (b2.type == final_queue || b2.type == goal){
-        //Si el casilla destino es meta o pasillo final, la cambiamos por la última casilla
-        //antes de entrar al pasillo final.
-        switch (b2.col){
-            case blue:
-                final_box = Box(final_blue_box, normal, none);
-            break;
-            case red:
-                final_box = Box(final_red_box, normal, none);
-            break;
-            case green:
-                final_box = Box(final_green_box, normal, none);
-            break;
-            case yellow:
-                final_box = Box(final_yellow_box, normal, none);
-            break;
-        }
-    }else{
-        final_box = b2;
-    }
-    vector<BoardTrap> traps;
-    bool reached_final_box = false;
-    if (b1.type == normal && final_box.num != b1.num){
-        for (int i = b1.num%68+1; !reached_final_box; i = i%68 + 1){ //Vamos recorriendo casillas intermedias
-            reached_final_box = (final_box.num == i);
-            //Si hay un muro, lo añadimos al vector de muros.
-            for (int j = 0; j < this->board.getTraps().size(); j++){
-                if (this->board.getTraps().at(j).getBox() == Box(i, normal, none)){
-                    traps.push_back(this->board.getTraps().at(j));
-                }
-            }
-        }
-    }
-    return traps;
 }
 
 const vector<pair <color, int>> Parchis::allPiecesBetween(const Box & b1, const Box & b2) const{
@@ -1944,6 +1825,98 @@ const pair<color, int> Parchis::eatenPiece() const{
     }
 }
 
+const int Parchis::getPower(int player) const{
+    return getPowerBar(player).getPower();
+}
+
+/**************************** DEPRECATED *********************/
+
+const color Parchis::isMegaWall(const Box & b) const{
+    if(b.type == home || b.type == goal) return none;
+
+    const vector<pair <color, int>> occupation = boxState(b);
+    if (occupation.size() == 1 && board.getPiece(occupation.at(0).first, occupation.at(0).second).get_type() == mega_piece){
+        return occupation.at(0).first;
+    }else{
+        return none;
+    }
+}
+
+const vector<color> Parchis::anyMegaWall(const Box & b1, const Box & b2) const{
+    Box final_box;
+    if (b2.type == final_queue || b2.type == goal){
+        //Si el casilla destino es meta o pasillo final, la cambiamos por la última casilla
+        //antes de entrar al pasillo final.
+        switch (b2.col){
+            case blue:
+                final_box = Box(final_blue_box, normal, none);
+            break;
+            case red:
+                final_box = Box(final_red_box, normal, none);
+            break;
+            case green:
+                final_box = Box(final_green_box, normal, none);
+            break;
+            case yellow:
+                final_box = Box(final_yellow_box, normal, none);
+            break;
+        }
+    }else{
+        final_box = b2;
+    }
+    vector<color> walls;
+    bool reached_final_box = false;
+    if (b1.type == normal && final_box.num != b1.num){
+        for (int i = b1.num % 68 + 1; !reached_final_box; i = i%68 + 1){ //Vamos recorriendo casillas intermedias
+            reached_final_box = (final_box.num == i);
+            //Si hay un muro, lo añadimos al vector de muros.
+            color c = isMegaWall(Box(i, normal, none));
+            if(c != none){
+                walls.push_back(c);
+            }
+        }
+    }
+    return walls;
+}
+
+const vector<BoardTrap> Parchis::anyTrap(const Box & b1, const Box & b2) const{
+    Box final_box;
+    if (b2.type == final_queue || b2.type == goal){
+        //Si el casilla destino es meta o pasillo final, la cambiamos por la última casilla
+        //antes de entrar al pasillo final.
+        switch (b2.col){
+            case blue:
+                final_box = Box(final_blue_box, normal, none);
+            break;
+            case red:
+                final_box = Box(final_red_box, normal, none);
+            break;
+            case green:
+                final_box = Box(final_green_box, normal, none);
+            break;
+            case yellow:
+                final_box = Box(final_yellow_box, normal, none);
+            break;
+        }
+    }else{
+        final_box = b2;
+    }
+    vector<BoardTrap> traps;
+    bool reached_final_box = false;
+    if (b1.type == normal && final_box.num != b1.num){
+        for (int i = b1.num%68+1; !reached_final_box; i = i%68 + 1){ //Vamos recorriendo casillas intermedias
+            reached_final_box = (final_box.num == i);
+            //Si hay un muro, lo añadimos al vector de muros.
+            for (int j = 0; j < this->board.getTraps().size(); j++){
+                if (this->board.getTraps().at(j).getBox() == Box(i, normal, none)){
+                    traps.push_back(this->board.getTraps().at(j));
+                }
+            }
+        }
+    }
+    return traps;
+}
+
 const vector<pair<color, int>> Parchis::piecesDestroyedByStar() const{
     return pieces_destroyed_by_star;
 }
@@ -1966,15 +1939,6 @@ const vector<pair<color, int>> Parchis::piecesDestroyedByHorn() const
 }
 
 const vector<pair<color, int>> Parchis::piecesDestroyedLastMove() const{
-    // Append all vectors
-    /*
-    vector<pair<color, int>> all_pieces_destroyed;
-    all_pieces_destroyed.insert(all_pieces_destroyed.end(), pieces_destroyed_by_star.begin(), pieces_destroyed_by_star.end());
-    all_pieces_destroyed.insert(all_pieces_destroyed.end(), pieces_crushed_by_megamushroom.begin(), pieces_crushed_by_megamushroom.end());
-    all_pieces_destroyed.insert(all_pieces_destroyed.end(), pieces_destroyed_by_red_shell.begin(), pieces_destroyed_by_red_shell.end());
-    all_pieces_destroyed.insert(all_pieces_destroyed.end(), pieces_destroyed_by_blue_shell.begin(), pieces_destroyed_by_blue_shell.end());
-    all_pieces_destroyed.insert(all_pieces_destroyed.end(), pieces_destroyed_by_horn.begin(), pieces_destroyed_by_horn.end());
-    return all_pieces_destroyed;*/
     if(pieces_destroyed_by_star.size() > 0)
         return pieces_destroyed_by_star;
     else if(pieces_crushed_by_megamushroom.size() > 0)
@@ -1993,6 +1957,7 @@ bool Parchis::itemAcquired() const{
     return this->last_acquired != not_an_item;
 }
 
+
 item_type Parchis::getItemAcquired() const{
     return this->last_acquired;
 }
@@ -2000,4 +1965,3 @@ item_type Parchis::getItemAcquired() const{
 bool Parchis::isNormalDice(int dice) const{
     return dice >= 1 and dice <= 6;
 }
-

@@ -1024,15 +1024,6 @@ class Parchis{
         const color isWall(const Box & b) const;
 
         /**
-         * @brief Función que devuelve el color de la mega barrera (en caso de haberla) en la casilla "b".
-         * Es decir, si hay una barrera formada por una mega ficha devuelve el color de dicha ficha.
-         *
-         * @param b
-         * @return const color
-         */
-        const color isMegaWall(const Box & b) const;
-
-        /**
          * @brief Función que devuelve el vector de colores de las barreras (en caso de haberlas) del
          * camino entre b1 y b2.
          *
@@ -1048,6 +1039,51 @@ class Parchis{
          * @return const vector<color>
          */
         const vector<color> anyWall(const Box & b1, const Box & b2) const;
+
+        /**
+         * @brief Función que devuelve todas las fichas que hay entre la casilla b1 y la b2.
+         * Va recorriendo todas las casillas por las que habría que pasar para ir de b1 a b2 y
+         * añadiendo al vector pares con la ocupación de las casillas de la forma {color, num_ficha}.
+         *
+         * @param b1
+         * @param b2
+         * @return const vector<pair <color, int>>
+         */
+        const vector<pair <color, int>> allPiecesBetween(const Box & b1, const Box & b2) const;
+
+        /**
+         * @brief Devuelve los colores asociados a cada jugador (amarillo y rojo para el 0 y verde y azul para el 1).
+         *
+         * @param player
+         * @return vector<color>
+         */
+        vector<color> getPlayerColors(int player) const;
+
+        /**
+         * @brief Devuelve la ficha comida en el último turno.
+         *
+         * @return const pair<color, int>
+         */
+        const pair<color, int> eatenPiece() const;
+
+        /**
+         * @brief Función que devuelve el valor de la barra de energía del jugador player.
+         *
+         * @param player
+         * @return const int
+         */
+        const int getPower(int player) const;
+
+        /**************************** DEPRECATED *********************/
+        
+        /**
+         * @brief Función que devuelve el color de la mega barrera (en caso de haberla) en la casilla "b".
+         * Es decir, si hay una barrera formada por una mega ficha devuelve el color de dicha ficha.
+         *
+         * @param b
+         * @return const color
+         */
+        const color isMegaWall(const Box & b) const;
 
         /**
          * @brief Función que devuelve un vector de trampas entre b1 y b2, en caso de haberlas.
@@ -1072,25 +1108,6 @@ class Parchis{
          * @return const vector<color>
          */
         const vector<color> anyMegaWall(const Box & b1, const Box & b2) const;
-
-        /**
-         * @brief Función que devuelve todas las fichas que hay entre la casilla b1 y la b2.
-         * Va recorriendo todas las casillas por las que habría que pasar para ir de b1 a b2 y
-         * añadiendo al vector pares con la ocupación de las casillas de la forma {color, num_ficha}.
-         *
-         * @param b1
-         * @param b2
-         * @return const vector<pair <color, int>>
-         */
-        const vector<pair <color, int>> allPiecesBetween(const Box & b1, const Box & b2) const;
-
-        /**
-         * @brief Devuelve los colores asociados a cada jugador (amarillo y rojo para el 0 y verde y azul para el 1).
-         *
-         * @param player
-         * @return vector<color>
-         */
-        vector<color> getPlayerColors(int player) const;
 
         // -- CONSULTAS DE FICHAS ESPECIALES -- //
 
@@ -1164,13 +1181,6 @@ class Parchis{
          * IMPORTANTE: Las fichas comidas normales no se cuentan aquí, para eso se usa eatenPiece().
          */
         const vector<pair<color, int>> piecesDestroyedLastMove() const;
-
-        /**
-         * @brief Devuelve la ficha comida por un movimiento normal en el último turno.
-         *
-         * @return const pair<color, int>
-         */
-        const pair<color, int> eatenPiece() const;
 };
 
 
