@@ -619,7 +619,7 @@ void Parchis::movePiece(color player, int piece, int dice_number){
                             color c = player_colors[i];
                             for (int j = 0; j < board.getPieces(c).size(); j++){
                                 int dist = distanceToGoal(c,j);
-                                if(dist > max_dist and board.getPiece(c,j).get_box().type != home){
+                                if(dist > max_dist and board.getPiece(c,j).get_box().type != home and board.getPiece(player,piece).get_box().type != home){
                                     player = c;
                                     piece = j;
                                     max_dist = dist;
@@ -633,10 +633,10 @@ void Parchis::movePiece(color player, int piece, int dice_number){
                             
                             for (int i = 0; i < game_colors.size(); i++){
                                 color c = game_colors[i];
-                                if (c != player){
+                                //if (c != player){
                                     for (int j = 0; j < board.getPieces(c).size(); j++){
                                         Piece horny_piece = board.getPiece(c, j);
-                                        if(horny_piece.get_type() != boo_piece and horny_piece.get_type() != mega_piece and horny_piece.get_type() != star_piece and horny_piece.get_box().type != goal){
+                                        if(horny_piece.get_type() != boo_piece and horny_piece.get_type() != mega_piece and horny_piece.get_type() != star_piece and horny_piece.get_box().type != goal and horny_piece.get_box().type != home){
                                             int dist_paforward = distanceBoxtoBox(player, piece, c, j);
                                             int dist_paantes = distanceBoxtoBox(c, j, player, piece);
                                             if (dist_paforward <= 2 and dist_paforward >= 0 or dist_paantes <= 2 and dist_paantes >= 0){
@@ -644,17 +644,23 @@ void Parchis::movePiece(color player, int piece, int dice_number){
                                             }
                                         }
                                     }
-                                }
+                                //}
                             }
 
-                            this->last_moves.push_back(tuple<color, int, Box, Box>(player, piece, piece_box, piece_box));
-
+                            bool already_deleted;
                             for (int i = 0; i < deleted_pieces.size(); i++){
-                                Piece current_piece = board.getPiece(deleted_pieces[i].first, deleted_pieces[i].second);
-                                Box origin = board.getPiece(deleted_pieces[i].first, deleted_pieces[i].second).get_box();
-                                board.movePiece(deleted_pieces[i].first, deleted_pieces[i].second, Box(0, home, deleted_pieces[i].first));
-                                this->last_moves.push_back(tuple<color, int, Box, Box>(deleted_pieces[i].first, deleted_pieces[i].second, origin, Box(0, home, deleted_pieces[i].first)));
-                                this->pieces_destroyed_by_horn.push_back({deleted_pieces[i].first, deleted_pieces[i].second});
+                                already_deleted = false;
+                                for(int j = 0; j < i; j++){
+                                    if(deleted_pieces[i].first == deleted_pieces[j].first and deleted_pieces[i].second == deleted_pieces[j].second)
+                                        already_deleted = true;
+                                }
+                                if(!already_deleted){
+                                    Piece current_piece = board.getPiece(deleted_pieces[i].first, deleted_pieces[i].second);
+                                    Box origin = board.getPiece(deleted_pieces[i].first, deleted_pieces[i].second).get_box();
+                                    board.movePiece(deleted_pieces[i].first, deleted_pieces[i].second, Box(0, home, deleted_pieces[i].first));
+                                    this->last_moves.push_back(tuple<color, int, Box, Box>(deleted_pieces[i].first, deleted_pieces[i].second, origin, Box(0, home, deleted_pieces[i].first)));
+                                    this->pieces_destroyed_by_horn.push_back({deleted_pieces[i].first, deleted_pieces[i].second});
+                                }
                             }
                         }
                     }
@@ -669,7 +675,7 @@ void Parchis::movePiece(color player, int piece, int dice_number){
                             color c = player_colors[i];
                             for (int j = 0; j < board.getPieces(c).size(); j++){
                                 int dist = distanceToGoal(c,j);
-                                if(dist < min_dist and board.getPiece(c,j).get_box().type != goal){
+                                if(dist < min_dist and board.getPiece(c,j).get_box().type != goal and board.getPiece(player,piece).get_box().type != home){
                                     player = c;
                                     piece = j;
                                     min_dist = dist;
@@ -683,10 +689,10 @@ void Parchis::movePiece(color player, int piece, int dice_number){
                             
                             for (int i = 0; i < game_colors.size(); i++){
                                 color c = game_colors[i];
-                                if (c != player){
+                                //if (c != player){
                                     for (int j = 0; j < board.getPieces(c).size(); j++){
                                         Piece horny_piece = board.getPiece(c, j);
-                                        if(horny_piece.get_type() != boo_piece and horny_piece.get_type() != mega_piece and horny_piece.get_type() != star_piece and horny_piece.get_box().type != goal){
+                                        if(horny_piece.get_type() != boo_piece and horny_piece.get_type() != mega_piece and horny_piece.get_type() != star_piece and horny_piece.get_box().type != goal and horny_piece.get_box().type != home){
                                             int dist_paforward = distanceBoxtoBox(player, piece, c, j);
                                             int dist_paantes = distanceBoxtoBox(c, j, player, piece);
                                             if (dist_paforward <= 2 and dist_paforward >= 0 or dist_paantes <= 2 and dist_paantes >= 0){
@@ -694,17 +700,23 @@ void Parchis::movePiece(color player, int piece, int dice_number){
                                             }
                                         }
                                     }
-                                }
+                                //}
                             }
 
-                            this->last_moves.push_back(tuple<color, int, Box, Box>(player, piece, piece_box, piece_box));
-
+                            bool already_deleted;
                             for (int i = 0; i < deleted_pieces.size(); i++){
-                                Piece current_piece = board.getPiece(deleted_pieces[i].first, deleted_pieces[i].second);
-                                Box origin = board.getPiece(deleted_pieces[i].first, deleted_pieces[i].second).get_box();
-                                board.movePiece(deleted_pieces[i].first, deleted_pieces[i].second, Box(0, home, deleted_pieces[i].first));
-                                this->last_moves.push_back(tuple<color, int, Box, Box>(deleted_pieces[i].first, deleted_pieces[i].second, origin, Box(0, home, deleted_pieces[i].first)));
-                                this->pieces_destroyed_by_horn.push_back({deleted_pieces[i].first, deleted_pieces[i].second});
+                                already_deleted = false;
+                                for(int j = 0; j < i; j++){
+                                    if(deleted_pieces[i].first == deleted_pieces[j].first and deleted_pieces[i].second == deleted_pieces[j].second)
+                                        already_deleted = true;
+                                }
+                                if(!already_deleted){
+                                    Piece current_piece = board.getPiece(deleted_pieces[i].first, deleted_pieces[i].second);
+                                    Box origin = board.getPiece(deleted_pieces[i].first, deleted_pieces[i].second).get_box();
+                                    board.movePiece(deleted_pieces[i].first, deleted_pieces[i].second, Box(0, home, deleted_pieces[i].first));
+                                    this->last_moves.push_back(tuple<color, int, Box, Box>(deleted_pieces[i].first, deleted_pieces[i].second, origin, Box(0, home, deleted_pieces[i].first)));
+                                    this->pieces_destroyed_by_horn.push_back({deleted_pieces[i].first, deleted_pieces[i].second});
+                                }
                             }
                         }
                     }
@@ -721,7 +733,7 @@ void Parchis::movePiece(color player, int piece, int dice_number){
                             int best_j;
                             for (int j = 0; j < board.getPieces(c).size(); j++){
                                 int dist = distanceToGoal(c,j);
-                                if(dist < min_dist and board.getPiece(c,j).get_box().type != goal){
+                                if(dist < min_dist and board.getPiece(c,j).get_box().type != goal and board.getPiece(player,piece).get_box().type != home){
                                     player = c;
                                     piece = j;
                                     min_dist = dist;
@@ -733,10 +745,10 @@ void Parchis::movePiece(color player, int piece, int dice_number){
                             
                                 for (int i = 0; i < game_colors.size(); i++){
                                     color c = game_colors[i];
-                                    if (c != player){
+                                    //if (c != player){
                                         for (int j = 0; j < board.getPieces(c).size(); j++){
                                             Piece horny_piece = board.getPiece(c, j);
-                                            if(horny_piece.get_type() != boo_piece and horny_piece.get_type() != mega_piece and horny_piece.get_type() != star_piece and horny_piece.get_box().type != goal){
+                                            if(horny_piece.get_type() != boo_piece and horny_piece.get_type() != mega_piece and horny_piece.get_type() != star_piece and horny_piece.get_box().type != goal and horny_piece.get_box().type != home){
                                                 int dist_paforward = distanceBoxtoBox(player, piece, c, j);
                                                 int dist_paantes = distanceBoxtoBox(c, j, player, piece);
                                                 if (dist_paforward <= 2 and dist_paforward >= 0 or dist_paantes <= 2 and dist_paantes >= 0){
@@ -744,12 +756,18 @@ void Parchis::movePiece(color player, int piece, int dice_number){
                                                 }
                                             }
                                         }
-                                    }
+                                    //}
                                 }
-
-                                this->last_moves.push_back(tuple<color, int, Box, Box>(player, piece, piece_box, piece_box));
-
-                                for (int i = 0; i < deleted_pieces.size(); i++){
+                            }
+                                
+                            bool already_deleted = false;
+                            for (int i = 0; i < deleted_pieces.size(); i++){
+                                already_deleted = false;
+                                for(int j = 0; j < i; j++){
+                                    if(deleted_pieces[i].first == deleted_pieces[j].first and deleted_pieces[i].second == deleted_pieces[j].second)
+                                        already_deleted = true;
+                                }
+                                if(!already_deleted){
                                     Piece current_piece = board.getPiece(deleted_pieces[i].first, deleted_pieces[i].second);
                                     Box origin = board.getPiece(deleted_pieces[i].first, deleted_pieces[i].second).get_box();
                                     board.movePiece(deleted_pieces[i].first, deleted_pieces[i].second, Box(0, home, deleted_pieces[i].first));
@@ -781,16 +799,16 @@ void Parchis::movePiece(color player, int piece, int dice_number){
                         player = player_colors[dist_colors[0] < dist_colors[1] ? 0 : 1];
                         for (piece = 0; piece < board.getPieces(player).size(); piece++){
                             //Eliminamos todas las fichas del mejor color, menos las que ya están en la meta
-                            if(board.getPiece(player,piece).get_box().type != goal){
+                            if(board.getPiece(player,piece).get_box().type != goal and board.getPiece(player,piece).get_box().type != home){
                                 deleted_pieces.push_back(pair<color, int>(player, piece));
                             }
                             
                             for (int i = 0; i < game_colors.size(); i++){
                                 color c = game_colors[i];
-                                if (c != player){
+                                //if (c != player){
                                     for (int j = 0; j < board.getPieces(c).size(); j++){
                                         Piece horny_piece = board.getPiece(c, j);
-                                        if(horny_piece.get_type() != boo_piece and horny_piece.get_type() != mega_piece and horny_piece.get_type() != star_piece and horny_piece.get_box().type != goal){
+                                        if(horny_piece.get_type() != boo_piece and horny_piece.get_type() != mega_piece and horny_piece.get_type() != star_piece and horny_piece.get_box().type != goal and horny_piece.get_box().type != home){
                                             int dist_paforward = distanceBoxtoBox(player, piece, c, j);
                                             int dist_paantes = distanceBoxtoBox(c, j, player, piece);
                                             if (dist_paforward <= 2 and dist_paforward >= 0 or dist_paantes <= 2 and dist_paantes >= 0){
@@ -798,12 +816,19 @@ void Parchis::movePiece(color player, int piece, int dice_number){
                                             }
                                         }
                                     }
-                                }
+                                //}
                             }
+                        }
+                            //this->last_moves.push_back(tuple<color, int, Box, Box>(player, piece, piece_box, piece_box));
+                        bool already_deleted = false;
 
-                            this->last_moves.push_back(tuple<color, int, Box, Box>(player, piece, piece_box, piece_box));
-
-                            for (int i = 0; i < deleted_pieces.size(); i++){
+                        for (int i = 0; i < deleted_pieces.size(); i++){
+                            already_deleted = false;
+                            for(int j = 0; j < i; j++){
+                                if(deleted_pieces[i].first == deleted_pieces[j].first and deleted_pieces[i].second == deleted_pieces[j].second)
+                                    already_deleted = true;
+                            }
+                            if(!already_deleted){
                                 Piece current_piece = board.getPiece(deleted_pieces[i].first, deleted_pieces[i].second);
                                 Box origin = board.getPiece(deleted_pieces[i].first, deleted_pieces[i].second).get_box();
                                 board.movePiece(deleted_pieces[i].first, deleted_pieces[i].second, Box(0, home, deleted_pieces[i].first));
@@ -811,6 +836,7 @@ void Parchis::movePiece(color player, int piece, int dice_number){
                                 this->pieces_destroyed_by_horn.push_back({deleted_pieces[i].first, deleted_pieces[i].second});
                             }
                         }
+                        
                         
                     }
                     break;         

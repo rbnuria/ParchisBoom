@@ -396,10 +396,11 @@ ParchisGUI::ParchisGUI(Parchis &model)
         this->blue_boom[i] = ExplosionSprite(tBOOM, Color::Cyan);
         this->red_boom[i] = ExplosionSprite(tBOOM, Color::Red);
         this->golden_boom[i] = ExplosionSprite(tBOOM, Color::White); //Color(255, 215, 0));
+        this->horn_boom[i] = ExplosionSprite(tBOOM, Color(255, 140, 0));
     }
     this->current_boom_sprite = 0;
 
-    this->horn_boom = ExplosionSprite(tBOOM, Color(255, 140, 0));
+    
 
     // Agrupación de los canales de animación.
     this->all_animators.push_back(&this->animations_ch1);
@@ -515,12 +516,13 @@ void ParchisGUI::collectSprites(){
     for(int i = 0; i < BOOM_SPRITE_LIMIT; i++){
         all_drawable_sprites.push_back(&blue_boom[i]);
         all_drawable_sprites.push_back(&red_boom[i]);
+        all_drawable_sprites.push_back(&horn_boom[i]);
         board_drawable_sprites.push_back(&blue_boom[i]);
         board_drawable_sprites.push_back(&red_boom[i]);
+        board_drawable_sprites.push_back(&horn_boom[i]);
     }
 
-    all_drawable_sprites.push_back(&horn_boom);
-    board_drawable_sprites.push_back(&horn_boom);
+   
 
     piece_sprite_start = board_drawable_sprites.size();
     for (int i = 0; i < colors.size(); i++)
@@ -1567,14 +1569,24 @@ void ParchisGUI::queueMove(color col, int id, Box origin, Box dest, void (Parchi
                 else if(model->isStarMove())
                     animate_sprite = &golden_boom[current_boom_sprite];
                 else if(model->isHornMove())
-                    animate_sprite = &golden_boom[current_boom_sprite];
+                    animate_sprite = &horn_boom[current_boom_sprite];
 
-                current_boom_sprite = (current_boom_sprite + 1) % BOOM_SPRITE_LIMIT;
-                animate_pos = (Vector2f)box2position.at(origin)[0] + Vector2f(animate_sprite->getLocalBounds().width/2, animate_sprite->getLocalBounds().height/2);
-                animate_sprite->setPosition(animate_pos);
-                animate_sprite->setOrigin(animate_sprite->getLocalBounds().width/2, animate_sprite->getLocalBounds().height/2);
-                shared_ptr<ExplosionAnimator> animator = make_shared<ExplosionAnimator>(*animate_sprite, 1.f, 3.f, animation_time);
-                animations_ch5.push(animator);
+                if(!model->isHornMove()){
+                    current_boom_sprite = (current_boom_sprite + 1) % BOOM_SPRITE_LIMIT;
+                    animate_pos = (Vector2f)box2position.at(origin)[0] + Vector2f(animate_sprite->getLocalBounds().width/2, animate_sprite->getLocalBounds().height/2);
+                    animate_sprite->setPosition(animate_pos);
+                    animate_sprite->setOrigin(animate_sprite->getLocalBounds().width/2, animate_sprite->getLocalBounds().height/2);
+                    shared_ptr<ExplosionAnimator> animator = make_shared<ExplosionAnimator>(*animate_sprite, 1.f, 3.f, animation_time);
+                    animations_ch5.push(animator);
+                }
+                else{
+                    current_boom_sprite = (current_boom_sprite + 1) % BOOM_SPRITE_LIMIT;
+                    animate_pos = (Vector2f)box2position.at(origin)[0] + Vector2f(animate_sprite->getLocalBounds().width/2, animate_sprite->getLocalBounds().height/2);
+                    animate_sprite->setPosition(animate_pos);
+                    animate_sprite->setOrigin(animate_sprite->getLocalBounds().width/2, animate_sprite->getLocalBounds().height/2);
+                    shared_ptr<ExplosionAnimator> animator = make_shared<ExplosionAnimator>(*animate_sprite, 1.f, 3.f, animation_time);
+                    animations_ch5.push(animator);
+                }
             }
         }
     }
