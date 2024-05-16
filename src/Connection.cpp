@@ -1266,7 +1266,7 @@ void MasterServer::handleClientConnection(shared_ptr<ParchisServer> server, Pack
     server->packet2Hello(packet, version, args);
 
     if(version != ONLINE_VERSION){
-        server->sendErrorMessage(ERR_UPDATE, "Hay una versión más reciente del juego. Es necesario actualizar el repositorio para jugar online, y también recomendable para el juego local. Recuerda: git pull upstream main (tras haber seguido los pasos del tutorial).");
+        server->sendErrorMessage(ERR_UPDATE, "Hay una versión más reciente del juego. Es necesario actualizar el repositorio para jugar online, y también recomendable para el juego local. Recuerda: git pull upstream master (tras haber seguido los pasos del tutorial).");
         return;
     }
 
