@@ -352,7 +352,11 @@ void Parchis::movePiece(color player, int piece, int dice_number){
                 if (current_piece.get_type() == star_piece){
                     star_move = true;
                     //Obtenemos todas las fichas en su camino
-                    vector <pair<color, int>> destroyed_pieces = allPiecesBetween(piece_box, final_box);
+                    vector<pair<color, int>> destroyed_pieces;
+                    if (!goal_bounce)
+                        destroyed_pieces = allPiecesBetween(piece_box, final_box);
+                    else
+                        destroyed_pieces = allPiecesBetween(piece_box, Box(0, goal, current_piece.get_color())); // Si hay rebote solo nos cargamos hacia delante, un poco de compasión 
                     Box origin = current_piece.get_box();
                     for (int i = 0; i < destroyed_pieces.size(); i++){
                         special_type destroyed_type = board.getPiece(destroyed_pieces[i].first, destroyed_pieces[i].second).get_type();
