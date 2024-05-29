@@ -1376,7 +1376,9 @@ bool Parchis::gameStep(){
     // Check the time the player takes to move.
     auto start = std::chrono::high_resolution_clock::now();
 
+    ///////////// MOVIMIENTO /////////////
     bool move = players.at(this->current_player)->move();
+    //////////////////////////////////////
     
     auto end = std::chrono::high_resolution_clock::now();
 
