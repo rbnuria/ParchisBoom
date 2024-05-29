@@ -1373,7 +1373,16 @@ bool Parchis::gameStep(){
     cout << "----------------" << endl;
 
     // El jugador actual hace su movimiento.
+    // Check the time the player takes to move.
+    auto start = std::chrono::high_resolution_clock::now();
+
     bool move = players.at(this->current_player)->move();
+    
+    auto end = std::chrono::high_resolution_clock::now();
+
+    std::chrono::duration<double> time_taken = end - start;
+
+    cout << "Tiempo de movimiento: " << time_taken.count() << " segundos" << endl;
 
     // Se notifica el movimiento a todos los jugadores.
     for (int i = 0; i < players.size(); i++)

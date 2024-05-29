@@ -11,6 +11,7 @@
 #include <iostream>
 #include <algorithm>
 #include <memory>
+#include <chrono>
 
 // Macro que define el parámetro para indicar que no se mueve ficha.
 #define SKIP_TURN -9999
